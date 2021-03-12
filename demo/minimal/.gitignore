@@ -1,0 +1,4 @@
+minimal
+*.dump
+*.o
+*.S
