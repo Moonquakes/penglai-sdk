@@ -59,7 +59,8 @@ LIBS := \
 -ldl \
 -lc \
 -lgcc \
--lgcc_eh
+-lgcc_eh \
+-lc_add
 
 APP=minimal
 APP_LDS ?= $(PENGLAI_SDK)/app.lds
@@ -70,23 +71,11 @@ SDK_APP_LIB = $(SDK_LIB_DIR)/libpenglai-enclave-eapp.a
 MUSL_LIBC = $(MUSL_LIB_DIR)/libc.a
 GCC_LIB = $(SDK_LIB_DIR)/libgcc.a
 
-# all:
-# 	$(CXX) -c minimal.cc $(CXXFLAGS) $(INCLUDES) -static -o minimal.o
-# 	$(CC) -c minimal_entry.c -o minimal_entry.o
-# 	$(CC) minimal.o minimal_entry.o -static -o $(APP) $(LIB_PATH) $(LIBS)
-# 	chmod -x $(APP)
-
-# all:
-# 	$(CXX) -c minimal.cc $(CXXFLAGS) $(INCLUDES) -static -o minimal.o
-# 	$(CC) -I$(SDK_INCLUDE_DIR) -c minimal_entry.c -o minimal_entry.o
-# 	$(CC) minimal.o minimal_entry.o -static -o $(APP) $(LIB_PATH) $(SDK_APP_LIB) $(GCC_LIB) $(LIBS)
-# 	chmod -x $(APP)
-
 all:
 	$(CXX) -c minimal.cc $(CXXFLAGS) $(INCLUDES) -static -o minimal.o
 	$(CC) -I$(SDK_INCLUDE_DIR) -c minimal_entry.c -o minimal_entry.o
-	# $(LINK) $(LDFLAGS) -o $(APP) minimal_entry.o minimal.o stub.o $(SDK_APP_LIB) $(MUSL_LIBC) $(GCC_LIB) $(LIB_PATH) -T $(APP_LDS)
-	$(LINK) -L. -static -o $(APP) minimal.o minimal_entry.o $(LIB_PATH) $(SDK_APP_LIB) $(GCC_LIB) $(LIBS) -T $(APP_LDS)
+	$(CXX) -c stub.cc $(CXXFLAGS) -static -o stub.o
+	$(LINK) -L. -L$(SDK_LIB_DIR) -L$(MUSL_LIB_DIR) -static -o $(APP) minimal.o minimal_entry.o stub.o $(LIB_PATH) $(SDK_APP_LIB) $(MUSL_LIBC) $(GCC_LIB) $(LIBS) -T $(APP_LDS)
 	chmod -x $(APP)
 
 clean:

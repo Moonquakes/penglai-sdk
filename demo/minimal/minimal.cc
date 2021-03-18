@@ -38,20 +38,21 @@ extern unsigned int imported_model_size;
     exit(1);                                                 \
   }
 
-
-
+extern "C" void eapp_print(const char*s, ...);
 extern "C" int __main();
 int __main() {
   // Load model
   std::unique_ptr<tflite::FlatBufferModel> model =
       tflite::FlatBufferModel::BuildFromBuffer((const char *) imported_model, imported_model_size);
   TFLITE_MINIMAL_CHECK(model != nullptr);
+  eapp_print("Load model successfully!\n");
 
   // Build the interpreter with the InterpreterBuilder.
   // Note: all Interpreters should be built with the InterpreterBuilder,
   // which allocates memory for the Intrepter and does various set up
   // tasks so that the Interpreter can read the provided model.
   tflite::ops::builtin::BuiltinOpResolver resolver;
+  eapp_print("tflite::ops::builtin::BuiltinOpResolver resolver\n");
   tflite::InterpreterBuilder builder(*model, resolver);
   std::unique_ptr<tflite::Interpreter> interpreter;
   builder(&interpreter);

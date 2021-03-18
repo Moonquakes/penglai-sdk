@@ -13,8 +13,15 @@ SECTIONS
     *(.rdata)
     *(.rodata)
   }
+  . = ALIGN(0x1000);
   .data : { *(.data) }
-  .bss : { *(.bss) }
+  . = ALIGN(0x1000);
+  .bss : { 
+    *(.tbss._ZZN12_GLOBAL__N_110get_globalEvE6global)
+    *(.tbss) 
+    *(.bss)
+  }
+  . = ALIGN(0x1000);
   .debug : { *(.debug) }
 
   . = ALIGN(0x1000);
