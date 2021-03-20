@@ -1,33 +1,33 @@
 extern "C" void eapp_print(const char* s, ...);
 
 typedef long unsigned int size_t;
-extern "C" void *malloc(size_t);
-extern "C" void free(void *);
+// extern "C" void *malloc(size_t);
+// extern "C" void free(void *);
 
-void operator delete(void* p) {
-    eapp_print("delete stub.\n");
-	free(p);
-}
+// void operator delete(void* p) {
+//     eapp_print("delete stub.\n");
+// 	free(p);
+// }
 
-void *operator new(size_t size) {
-    eapp_print("new stub.\n");
-	return malloc(size);
-}
+// void *operator new(size_t size) {
+//     eapp_print("new stub.\n");
+// 	return malloc(size);
+// }
 
-void *operator new[](size_t size) {
-    eapp_print("new[] stub.\n");
-	return malloc(size);
-}
+// void *operator new[](size_t size) {
+//     eapp_print("new[] stub.\n");
+// 	return malloc(size);
+// }
 
-void operator delete[](void* p) {
-    eapp_print("delete[] stub.\n");
-	free(p);
-}
+// void operator delete[](void* p) {
+//     eapp_print("delete[] stub.\n");
+// 	free(p);
+// }
 
-void operator delete(void* p, size_t) {
-    eapp_print("delete2 stub.\n");
-	free(p);
-}
+// void operator delete(void* p, size_t) {
+//     eapp_print("delete2 stub.\n");
+// 	free(p);
+// }
 
 void __calloc(){
     eapp_print("__calloc stub.\n");

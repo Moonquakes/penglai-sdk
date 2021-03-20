@@ -72,10 +72,10 @@ MUSL_LIBC = $(MUSL_LIB_DIR)/libc.a
 GCC_LIB = $(SDK_LIB_DIR)/libgcc.a
 
 all:
-	$(CXX) -c minimal.cc $(CXXFLAGS) $(INCLUDES) -static -o minimal.o
-	$(CC) -I$(SDK_INCLUDE_DIR) -c minimal_entry.c -o minimal_entry.o
-	$(CXX) -c stub.cc $(CXXFLAGS) -static -o stub.o
-	$(LINK) -L. -L$(SDK_LIB_DIR) -L$(MUSL_LIB_DIR) -static -o $(APP) minimal.o minimal_entry.o stub.o $(LIB_PATH) $(SDK_APP_LIB) $(MUSL_LIBC) $(GCC_LIB) $(LIBS) -T $(APP_LDS)
+	$(CXX) -c minimal.cc $(CXXFLAGS) $(INCLUDES) -g -static -o minimal.o
+	$(CC) -I$(SDK_INCLUDE_DIR) -c minimal_entry.c -g -o minimal_entry.o
+	$(CXX) -c stub.cc $(CXXFLAGS) -g -static -o stub.o
+	$(LINK) -L. -L$(SDK_LIB_DIR) -L$(MUSL_LIB_DIR) -g -static -o $(APP) minimal.o minimal_entry.o stub.o $(LIB_PATH) $(SDK_APP_LIB) $(MUSL_LIBC) $(GCC_LIB) $(LIBS) -T $(APP_LDS)
 	chmod -x $(APP)
 
 clean:

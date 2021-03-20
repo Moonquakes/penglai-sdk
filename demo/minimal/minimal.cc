@@ -41,6 +41,9 @@ extern unsigned int imported_model_size;
 extern "C" void eapp_print(const char*s, ...);
 extern "C" int __main();
 int __main() {
+  int a = 1;
+  tflite::ops::builtin::BuiltinOpResolver resolver1;
+  eapp_print("tflite::ops::builtin::BuiltinOpResolver resolver1\n");
   // Load model
   std::unique_ptr<tflite::FlatBufferModel> model =
       tflite::FlatBufferModel::BuildFromBuffer((const char *) imported_model, imported_model_size);
