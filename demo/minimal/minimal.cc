@@ -41,12 +41,9 @@ extern unsigned int imported_model_size;
 extern "C" void eapp_print(const char*s, ...);
 extern "C" int __main();
 int __main() {
-  int a = 1;
-  tflite::MutableOpResolver resolver1;
-  eapp_print("tflite::MutableOpResolver resolver1\n");
-  tflite::ops::builtin::BuiltinOpResolver resolver2;
-  eapp_print("tflite::ops::builtin::BuiltinOpResolver resolver2\n");
   // Load model
+  // tflite::Interpreter* test = new tflite::Interpreter();
+  // eapp_print(" tflite::Interpreter* test = new tflite::Interpreter()\n");
   std::unique_ptr<tflite::FlatBufferModel> model =
       tflite::FlatBufferModel::BuildFromBuffer((const char *) imported_model, imported_model_size);
   TFLITE_MINIMAL_CHECK(model != nullptr);
@@ -59,9 +56,14 @@ int __main() {
   tflite::ops::builtin::BuiltinOpResolver resolver;
   eapp_print("tflite::ops::builtin::BuiltinOpResolver resolver\n");
   tflite::InterpreterBuilder builder(*model, resolver);
+  eapp_print("tflite::InterpreterBuilder builder(*model, resolver)\n");
   std::unique_ptr<tflite::Interpreter> interpreter;
-  builder(&interpreter);
+  eapp_print("std::unique_ptr<tflite::Interpreter> interpreter\n");
+  builder.AddInterpreter(&interpreter);
+  // builder(&interpreter);
+  eapp_print("builder(&interpreter)\n");
   TFLITE_MINIMAL_CHECK(interpreter != nullptr);
+  eapp_print("TFLITE_MINIMAL_CHECK(interpreter != nullptr)\n");
 
   // Allocate tensor buffers.
   TFLITE_MINIMAL_CHECK(interpreter->AllocateTensors() == kTfLiteOk);
