@@ -9,7 +9,7 @@ extern unsigned long EAPP_OCALL(unsigned long ocall_func_id);
 
 int vsnprintf(size_t n, const char* s, va_list vl)
 {
-  char* out = (void*)ENCLAVE_DEFAULT_KBUFFER;
+  char* out = (void*)(0xffffffe000000000UL);
   bool format = false;
   bool longarg = false;
   size_t pos = 0;

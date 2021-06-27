@@ -5,6 +5,6 @@ int EAPP_ENTRY main(){
   unsigned long * args;
   EAPP_RESERVE_REG;
   eapp_print("%s is running\n", "Minimal");
-   __main();
+   __main_minimal();
   EAPP_RETURN(0);
 }

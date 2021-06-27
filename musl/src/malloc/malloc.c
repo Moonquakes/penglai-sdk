@@ -291,6 +291,20 @@ void *malloc(size_t n)
 	if (n >= MMAP_THRESHOLD) {
 		size_t len = n + OVERHEAD + PAGE_SIZE - 1 & -PAGE_SIZE;
 		// size_t len = n + OVERHEAD;
+                int exp = 1;
+		while(1)
+		{
+			if(((len / (exp * PAGE_SIZE)) < 1) ||
+			   (((len / (exp * PAGE_SIZE)) == 1) && ((len % (exp * PAGE_SIZE)) == 0)) )
+			{
+				len = (exp * PAGE_SIZE);
+				break;
+			}
+			else
+			{
+				exp = 2*exp;
+			}
+		}
 		char *base = __mmap(0, len, PROT_READ|PROT_WRITE,
 			MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
 		if (base == (void *)-1) return 0;

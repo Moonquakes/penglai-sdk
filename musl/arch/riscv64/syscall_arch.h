@@ -4,6 +4,10 @@
 #define DEFAULT_MMAP_SIZE 4096 * 8
 extern char __mmap_start0;
 
+#define SYS_ocall           90 //OCALL
+#define OCALL_MMAP          1 
+#define OCALL_UNMAP         2
+
 #define __asm_syscall(...) \
 	__asm__ __volatile__ ("ecall\n\t" \
 	: "=r"(a0) : __VA_ARGS__ : "memory"); \
@@ -57,14 +61,20 @@ static inline long __syscall2(long n, long a, long b)
 	register long a7 __asm__("a7") = n;
 	register long a0 __asm__("a0") = a;
 	register long a1 __asm__("a1") = b;
+  register long a2 __asm__("a2") = 0;
 	switch(n)
   {
     case SYS_munmap:
       {
-        struct mmap_metadata* tmp;
-        tmp = (struct mmap_metadata* )(a - sizeof(struct mmap_metadata));
-        tmp->type = 1;
-        return 0;
+        // struct mmap_metadata* tmp;
+        // tmp = (struct mmap_metadata* )(a - sizeof(struct mmap_metadata));
+        // tmp->type = 1;
+        // return 0;
+        a7 = SYS_ocall;
+			  a2 = a1;
+			  a1 = a0;
+			  a0 = OCALL_UNMAP;
+			  __asm_syscall("r"(a7), "0"(a0), "r"(a1), "r"(a2))
       }
   }
   __asm_syscall("r"(a7), "0"(a0), "r"(a1))
@@ -123,53 +133,57 @@ static inline long __syscall6(long n, long a, long b, long c, long d, long e, lo
   switch(n)
   {
     case SYS_mmap:
-      tmp =(struct mmap_metadata*)((unsigned long)&__mmap_start0 + __mmap_size0);
-      while(tmp)
-      {
-        if((unsigned long)tmp < (unsigned long)&__mmap_start0 + DEFAULT_MMAP_SIZE)
-        {
-          if((tmp->type == 0) || ((tmp->type == 1) && (tmp->size >= a1 + sizeof(struct mmap_metadata)) ) )
-          {
-            unsigned long tmp_size = tmp->size;
-            unsigned char tmp_type = tmp->type;
-            tmp->type = 2;
-            tmp->size = a1;
-            ret = (unsigned long)&__mmap_start0 + __mmap_size0 + sizeof(struct mmap_metadata); 
-            __mmap_size0 += sizeof(struct mmap_metadata) + a1;
-            tmp =(struct mmap_metadata*)((unsigned long)&__mmap_start0 + __mmap_size0);
-            if((unsigned long)tmp >= (unsigned long)&__mmap_start0 + DEFAULT_MMAP_SIZE)
-            {
-              ret -= sizeof(struct mmap_metadata);
-              ((struct mmap_metadata*)ret)->type = tmp_type;
-              ((struct mmap_metadata*)ret)->size = tmp_size;
-              return -1;
-            }
-            tmp->type = tmp_type;
-            if(tmp->size == 0)
-              tmp->size = 0;
-            else
-              tmp->size = tmp_size - a1 - sizeof(struct mmap_metadata); 
-            // __asm_syscall("r"(a7), "0"(a0), "r"(a1), "r"(a2), "r"(a3), "r"(a4), "r"(a5))
-            return ret;
-          }
-          else if(((tmp->type == 1) && (tmp->size < a1 + sizeof(struct mmap_metadata)) ) && 
-                        ((tmp->type == 1) && (tmp->size >= a1 )))
-          {
-            tmp->type = 2;
-            ret = (unsigned long)&__mmap_start0 + __mmap_size0 + sizeof(struct mmap_metadata); 
-            return ret;
-          }
-          else
-          {  
-            __mmap_size0 += sizeof(struct mmap_metadata) + tmp->size;
-            tmp = (struct mmap_metadata *)((unsigned long)&__mmap_start0 + __mmap_size0);
-          }
-        }
-        else
-        {
-          return -1;
-        }
-      }
+      a7 = SYS_ocall;
+      a2 = a1;
+      a1 = a0;
+      a0 = OCALL_MMAP;
+      // tmp =(struct mmap_metadata*)((unsigned long)&__mmap_start0 + __mmap_size0);
+      // while(tmp)
+      // {
+      //   if((unsigned long)tmp < (unsigned long)&__mmap_start0 + DEFAULT_MMAP_SIZE)
+      //   {
+      //     if((tmp->type == 0) || ((tmp->type == 1) && (tmp->size >= a1 + sizeof(struct mmap_metadata)) ) )
+      //     {
+      //       unsigned long tmp_size = tmp->size;
+      //       unsigned char tmp_type = tmp->type;
+      //       tmp->type = 2;
+      //       tmp->size = a1;
+      //       ret = (unsigned long)&__mmap_start0 + __mmap_size0 + sizeof(struct mmap_metadata); 
+      //       __mmap_size0 += sizeof(struct mmap_metadata) + a1;
+      //       tmp =(struct mmap_metadata*)((unsigned long)&__mmap_start0 + __mmap_size0);
+      //       if((unsigned long)tmp >= (unsigned long)&__mmap_start0 + DEFAULT_MMAP_SIZE)
+      //       {
+      //         ret -= sizeof(struct mmap_metadata);
+      //         ((struct mmap_metadata*)ret)->type = tmp_type;
+      //         ((struct mmap_metadata*)ret)->size = tmp_size;
+      //         return -1;
+      //       }
+      //       tmp->type = tmp_type;
+      //       if(tmp->size == 0)
+      //         tmp->size = 0;
+      //       else
+      //         tmp->size = tmp_size - a1 - sizeof(struct mmap_metadata); 
+      //       // __asm_syscall("r"(a7), "0"(a0), "r"(a1), "r"(a2), "r"(a3), "r"(a4), "r"(a5))
+      //       return ret;
+      //     }
+      //     else if(((tmp->type == 1) && (tmp->size < a1 + sizeof(struct mmap_metadata)) ) && 
+      //                   ((tmp->type == 1) && (tmp->size >= a1 )))
+      //     {
+      //       tmp->type = 2;
+      //       ret = (unsigned long)&__mmap_start0 + __mmap_size0 + sizeof(struct mmap_metadata); 
+      //       return ret;
+      //     }
+      //     else
+      //     {  
+      //       __mmap_size0 += sizeof(struct mmap_metadata) + tmp->size;
+      //       tmp = (struct mmap_metadata *)((unsigned long)&__mmap_start0 + __mmap_size0);
+      //     }
+      //   }
+      //   else
+      //   {
+      //     return -1;
+      //   }
+      // }
       break;
   }
 	__asm_syscall("r"(a7), "0"(a0), "r"(a1), "r"(a2), "r"(a3), "r"(a4), "r"(a5))

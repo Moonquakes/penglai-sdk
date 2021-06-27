@@ -8,7 +8,9 @@ all:
 	make -C server
 	make -C test-caller
 	make -C minimal
-	make -C test-cpp
+	make -C label_image
+	make -C label_image_caller
+	make -C label_image_server
 clean:
 	make -C host clean
 	make -C prime clean
@@ -19,4 +21,6 @@ clean:
 	make -C server clean
 	make -C test-caller clean
 	make -C minimal clean
-	make -C test-cpp clean
+	make -C label_image clean
+	make -C label_image_caller clean
+	make -C label_image_server clean

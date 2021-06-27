@@ -130,7 +130,7 @@ $(CRT_OBJS): CFLAGS_ALL += -DCRT
 
 $(LOBJS) $(LDSO_OBJS): CFLAGS_ALL += -fPIC
 
-CC_CMD = $(CC) $(CFLAGS_ALL) -c -o $@ $<
+CC_CMD = $(CC) $(CFLAGS_ALL) -c -g -o $@ $<
 
 # Choose invocation of assembler to be used
 ifeq ($(ADD_CFI),yes)

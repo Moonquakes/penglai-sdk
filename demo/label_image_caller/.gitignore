@@ -1,0 +1,4 @@
+label_image_caller
+*.dump
+*.o
+*.S

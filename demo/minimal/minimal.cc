@@ -19,9 +19,6 @@ limitations under the License.
 #include "tensorflow/lite/optional_debug_tools.h"
 #include "model_data.cc"
 
-extern unsigned char imported_model[4276352];
-extern unsigned int imported_model_size;
-
 // This is an example that is minimal to read a model
 // from disk and perform inference. There is no data being loaded
 // that is up to you to add as a user.
@@ -39,8 +36,8 @@ extern unsigned int imported_model_size;
   }
 
 extern "C" void eapp_print(const char*s, ...);
-extern "C" int __main();
-int __main() {
+extern "C" int __main_minimal();
+int __main_minimal() {
   // Load model
   // tflite::Interpreter* test = new tflite::Interpreter();
   // eapp_print(" tflite::Interpreter* test = new tflite::Interpreter()\n");
@@ -67,7 +64,7 @@ int __main() {
 
   // Allocate tensor buffers.
   TFLITE_MINIMAL_CHECK(interpreter->AllocateTensors() == kTfLiteOk);
-  // printf("=== Pre-invoke Interpreter State ===\n");
+  eapp_print("=== Pre-invoke Interpreter State ===\n");
   tflite::PrintInterpreterState(interpreter.get());
 
   // Fill input buffers
@@ -77,7 +74,7 @@ int __main() {
 
   // Run inference
   TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
-  // printf("\n\n=== Post-invoke Interpreter State ===\n");
+  eapp_print("=== Post-invoke Interpreter State ===\n");
   tflite::PrintInterpreterState(interpreter.get());
 
   // Read output buffers
